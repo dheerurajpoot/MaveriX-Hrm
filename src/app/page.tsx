@@ -29,7 +29,6 @@ import {
 	Book,
 } from "lucide-react";
 import Link from "next/link";
-import Image from "next/image";
 
 export default function LandingPage() {
 	const features = [
@@ -228,10 +227,6 @@ export default function LandingPage() {
 							<Clock className='w-6 h-6 text-white' />
 						</div>
 					</motion.div>
-
-					<div className="flex justify-center mb-5">
-						<Image src="/maverix-logo.png" alt="Logo" width={200} height={200} />
-					</div>
 
 					<div className='max-w-6xl mx-auto text-center relative'>
 						{/* Badge */}

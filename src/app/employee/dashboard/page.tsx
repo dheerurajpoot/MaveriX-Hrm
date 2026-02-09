@@ -25,7 +25,6 @@ import {
 	ArrowRight,
 	Plus,
 	Square,
-	Globe,
 } from "lucide-react";
 import type {
 	Attendance,
@@ -33,6 +32,7 @@ import type {
 	LeaveType,
 	TeamMember,
 } from "@/lib/types";
+
 interface LeaveBalanceWithType extends LeaveBalance {
 	leave_type?: LeaveType;
 }
@@ -588,7 +588,7 @@ export default function EmployeeDashboardPage() {
 											<span>{day.getDate()}</span>
 											{festivalTitles && (
 												<span className='mt-0.5 absolute right-1 top-1 inline-flex rounded-full bg-pink-500 text-[9px] text-pink-600 w-2 h-2'>
-
+													
 												</span>
 											)}
 											{!festivalTitles &&
@@ -708,112 +708,112 @@ export default function EmployeeDashboardPage() {
 					<UpcomingBirthdays />
 
 					{/* Profile summary card */}
-					<Card className="rounded-2xl border-border/50 shadow-sm overflow-hidden bg-gradient-to-tl from-fuchsia-100 to-blue-100 dark:from-violet-950/20 profile-card-image">
-						<CardContent className='pt-0 space-y-4'>
+					<Card className="rounded-2xl border-border/50 shadow-sm overflow-hidden bg-gradient-to-b from-primary/5 to-transparent dark:from-primary/10 dark:to-transparent">
+						<CardHeader className="pb-2">
+							<div className="flex items-center gap-3">
+								<div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/15 text-primary">
+									<User className="h-5 w-5" />
+								</div>
+								<CardTitle className="text-base font-semibold">My Profile</CardTitle>
+							</div>
+						</CardHeader>
+						<CardContent className='pt-0'>
 							{employee ? (
-								<>
-									{/* Profile Header Row: Avatar + Name + Employee ID */}
-									<div className='flex items-center gap-4 pb-4 border-b border-border/50'>
-										<Avatar className='h-16 w-16 border-3 border-white'>
+								<div className='flex flex-col'>
+									<div className='flex flex-col items-center text-center pb-4 border-b border-border/50'>
+										<Avatar className='h-20 w-20 border-4 border-background shadow-md ring-2 ring-primary/10'>
 											{employee.avatar_url ? (
-												<AvatarImage className="object-cover"
+												<AvatarImage
 													src={employee.avatar_url}
 													alt={`${employee.first_name} ${employee.last_name}`}
 												/>
 											) : null}
-											<AvatarFallback className='bg-gradient-to-br from-violet-500 to-blue-500 text-white text-xl font-bold'>
+											<AvatarFallback className='bg-primary text-primary-foreground text-2xl font-semibold'>
 												{employee.first_name?.[0]}
 												{employee.last_name?.[0]}
 											</AvatarFallback>
 										</Avatar>
-										<div className='flex-1 min-w-0'>
-											<h3 className='font-bold text-lg leading-tight truncate'>
-												{employee.first_name} {employee.last_name}
-											</h3>
-											<p className='text-xs text-muted-foreground mt-0.5 font-medium'>
-												ID: {employee.employee_id || "—"}
-											</p>
-										</div>
+										<p className='font-semibold text-lg mt-3'>
+											{employee.first_name}{" "}
+											{employee.last_name}
+										</p>
+										<p className='text-sm text-muted-foreground'>
+											{employee.designation || "—"}
+										</p>
+										{(employee.department ||
+											employee.email) && (
+												<p className='text-xs text-muted-foreground mt-0.5 flex items-center gap-1 justify-center flex-wrap'>
+													{employee.department && (
+														<span className='inline-flex items-center gap-0.5'>
+															<Building2 className='h-3 w-3' />
+															{employee.department}
+														</span>
+													)}
+													{employee.department &&
+														employee.email && (
+															<span className='text-border'>
+																•
+															</span>
+														)}
+													{employee.email && (
+														<span className='inline-flex items-center gap-0.5 truncate max-w-[180px]'>
+															<Mail className='h-3 w-3 shrink-0' />
+															{employee.email}
+														</span>
+													)}
+												</p>
+											)}
+										<Badge
+											variant={
+												employee.is_active
+													? "default"
+													: "secondary"
+											}
+											className={
+												employee.is_active
+													? "mt-2 bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-0"
+													: "mt-2"
+											}>
+											{employee.is_active
+												? "Active"
+												: "Inactive"}
+										</Badge>
 									</div>
-
-									{/* Details Grid */}
-									<div className='space-y-5'>
-										{/* Email */}
-										{employee.email && (
-											<div className='flex items-start gap-3'>
-												<div className='flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary shrink-0'>
-													<Mail className='h-4 w-4' />
-												</div>
-												<div className='flex-1 min-w-0'>
-													<p className='text-[10px] uppercase tracking-wide text-muted-foreground font-medium mb-0.5'>Email</p>
-													<p className='text-sm font-medium truncate'>{employee.email}</p>
-												</div>
-											</div>
-										)}
-
-										{/* Designation */}
-										{employee.designation && (
-											<div className='flex items-start gap-3'>
-												<div className='flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary shrink-0'>
-													<Building2 className='h-4 w-4' />
-												</div>
-												<div className='flex-1 min-w-0'>
-													<p className='text-[10px] uppercase tracking-wide text-muted-foreground font-medium mb-0.5'>Designation</p>
-													<p className='text-sm font-medium truncate'>{employee.designation}</p>
-												</div>
-											</div>
-										)}
-
-										{/* Mobile Number */}
-										{employee.phone && (
-											<div className='flex items-start gap-3'>
-												<div className='flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary shrink-0'>
-													<svg className='h-4 w-4' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
-														<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z' />
-													</svg>
-												</div>
-												<div className='flex-1 min-w-0'>
-													<p className='text-[10px] uppercase tracking-wide text-muted-foreground font-medium mb-0.5'>Mobile No</p>
-													<p className='text-sm font-medium truncate'>{employee.phone}</p>
-												</div>
-											</div>
-										)}
-
-										{/* Joining Date */}
+									<div className='space-y-2.5 pt-4'>
 										{employee.joining_date && (
-											<div className='flex items-start gap-3'>
-												<div className='flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary shrink-0'>
-													<CalendarCheck className='h-4 w-4' />
-												</div>
-												<div className='flex-1 min-w-0'>
-													<p className='text-[10px] uppercase tracking-wide text-muted-foreground font-medium mb-0.5'>Joining Date</p>
-													<p className='text-sm font-medium'>
-														{new Date(employee.joining_date).toLocaleDateString("en-IN", {
+											<div className='flex items-center gap-2.5 text-xs'>
+												<CalendarCheck className='h-4 w-4 text-muted-foreground shrink-0' />
+												<span className='text-muted-foreground'>
+													Joined
+												</span>
+												<span className='font-medium ml-auto'>
+													{new Date(
+														employee.joining_date
+													).toLocaleDateString(
+														"en-IN",
+														{
 															day: "numeric",
 															month: "short",
 															year: "numeric",
-														})}
-													</p>
-												</div>
+														}
+													)}
+												</span>
 											</div>
 										)}
+										<Button
+											variant='outline'
+											size='sm'
+											className='w-full mt-2'
+											asChild>
+											<Link
+												href='/employee/profile'
+												className='inline-flex items-center justify-center gap-2'>
+												View full profile
+												<ArrowRight className='h-3.5 w-3.5' />
+											</Link>
+										</Button>
 									</div>
-
-									{/* View Full Profile Button */}
-									<div className='flex items-start gap-3'>
-										<div className='flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary'>
-											<Globe className='h-4 w-4' />
-										</div>
-										<div className='flex-1 min-w-0'>
-											<p className='text-[10px] uppercase tracking-wide text-muted-foreground font-medium mb-0.5'>Website</p>
-											<p className='text-sm font-medium'>
-												<a href="https://mavericksmedia.org/" target="_blank" rel="noopener noreferrer">
-													mavericksmedia.org
-												</a>
-											</p>
-										</div>
-									</div>
-								</>
+								</div>
 							) : (
 								<div className='flex flex-col items-center justify-center py-10 text-center'>
 									<div className='h-16 w-16 animate-pulse rounded-full bg-muted mb-3' />

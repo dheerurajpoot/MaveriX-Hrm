@@ -95,7 +95,6 @@ export default function LeavePage() {
 		daysByType: {},
 	});
 	const [allotEmployeeSearch, setAllotEmployeeSearch] = useState("");
-	const [employeeLeaveSearch, setEmployeeLeaveSearch] = useState("");
 	const [isTypeDialogOpen, setIsTypeDialogOpen] = useState(false);
 	const [typeForm, setTypeForm] = useState<{
 		id: string | null;
@@ -909,7 +908,144 @@ export default function LeavePage() {
 					</TabsContent>
 
 					<TabsContent value='allotment' className='mt-4 space-y-6'>
-						{/* Leave Types Management - MOVED TO TOP */}
+						<Card>
+							<CardHeader className='flex flex-row items-center justify-between'>
+								<CardTitle className='text-base'>
+									Total Leaves (Allotted by Employee)
+								</CardTitle>
+								{canApproveLeave && (
+									<Button
+										size='sm'
+										onClick={() => openAllotDialog()}>
+										<CalendarDays className='mr-2 h-4 w-4' />
+										Allot Leaves
+									</Button>
+								)}
+							</CardHeader>
+							<CardContent>
+								{leaveBalanceGroups.length === 0 ? (
+									<p className='text-sm text-muted-foreground'>
+										No leave balances yet. Allot leaves to
+										employees above.
+									</p>
+								) : (
+									<div className='w-[300px] md:w-full overflow-x-auto'>
+										<Table>
+											<TableHeader>
+												<TableRow>
+													<TableHead>
+														Employee
+													</TableHead>
+													<TableHead>Year</TableHead>
+													<TableHead>
+														Leave Types &amp;
+														Remaining
+													</TableHead>
+													{canApproveLeave && (
+														<TableHead>
+															Actions
+														</TableHead>
+													)}
+												</TableRow>
+											</TableHeader>
+											<TableBody>
+												{leaveBalanceGroups.map(
+													(group) => {
+														const name =
+															group.employee
+																?.first_name &&
+																group.employee
+																	?.last_name
+																? `${group.employee.first_name} ${group.employee.last_name}`
+																: group.employee_id;
+														return (
+															<TableRow
+																key={`${group.employee_id}-${group.year}`}>
+																<TableCell className='text-sm font-medium'>
+																	{name}
+																</TableCell>
+																<TableCell>
+																	{group.year}
+																</TableCell>
+																<TableCell>
+																	<div className='flex flex-wrap gap-2'>
+																		{group.balances.map(
+																			(
+																				bal
+																			) => {
+																				const remaining =
+																					bal.total_days -
+																					bal.used_days;
+																				const typeName =
+																					(
+																						bal.leave_type as LeaveType
+																					)
+																						?.name ??
+																					"Leave";
+																				return (
+																					<Badge
+																						key={
+																							bal.id
+																						}
+																						variant='secondary'
+																						className='font-normal'>
+																						{
+																							typeName
+																						}
+
+																						:{" "}
+																						{formatRemainingDays(
+																							remaining
+																						)}{" "}
+																						remaining
+																					</Badge>
+																				);
+																			}
+																		)}
+																	</div>
+																</TableCell>
+																{canApproveLeave && (
+																	<TableCell>
+																		<div className='flex gap-2'>
+																			<Button
+																				size='sm'
+																				variant='outline'
+																				onClick={() =>
+																					openAllotDialog(
+																						group.employee_id,
+																						group.year
+																					)
+																				}>
+																				Edit
+																			</Button>
+																			<Button
+																				size='sm'
+																				variant='ghost'
+																				className='text-destructive hover:text-destructive'
+																				onClick={() =>
+																					handleDeleteBalanceGroup(
+																						group.employee_id,
+																						group.year,
+																						name
+																					)
+																				}>
+																				Delete
+																			</Button>
+																		</div>
+																	</TableCell>
+																)}
+															</TableRow>
+														);
+													}
+												)}
+											</TableBody>
+										</Table>
+									</div>
+								)}
+							</CardContent>
+						</Card>
+
+						{/* Leave Types Management */}
 						<Card>
 							<CardHeader className='flex flex-row items-center justify-between'>
 								<div>
@@ -935,221 +1071,54 @@ export default function LeavePage() {
 										No leave types defined yet.
 									</p>
 								) : (
-									<div className='grid gap-3 grid-cols-2 md:grid-cols-3 lg:grid-cols-5'>
+									<div className='grid gap-4 grid-cols-2 lg:grid-cols-5'>
 										{leaveTypes.map((type) => (
-											<Card
+											<div
 												key={type.id}
-												className='overflow-hidden border border-border/50 hover:shadow-md transition-shadow'>
-												<CardContent className='p-4 space-y-2'>
-													<div className='text-center'>
-														<h4 className='font-semibold text-sm truncate'>
-															{type.name}
-														</h4>
-														<p className='mt-2 text-3xl font-bold text-primary'>
-															{type.default_days}
+												className='flex flex-col justify-between rounded-lg border border-border p-4 text-center'>
+												<div>
+													<h4 className='font-medium text-sm'>
+														{type.name}
+													</h4>
+													<p className='mt-1 text-2xl font-bold text-primary'>
+														{type.default_days}
+													</p>
+													<p className='text-xs text-muted-foreground'>
+														days / year
+													</p>
+													{type.description && (
+														<p className='mt-2 text-[11px] text-muted-foreground line-clamp-3'>
+															{type.description}
 														</p>
-														<p className='text-xs text-muted-foreground'>
-															days / year
-														</p>
-														{type.description && (
-															<p className='mt-2 text-[11px] text-muted-foreground line-clamp-2'>
-																{type.description}
-															</p>
-														)}
-													</div>
-													{canApproveLeave && (
-														<div className='flex justify-center gap-1.5 pt-2 border-t border-border/50'>
-															<Button
-																size='sm'
-																variant='outline'
-																className='h-7 text-xs'
-																onClick={() =>
-																	openEditLeaveType(
-																		type
-																	)
-																}>
-																Edit
-															</Button>
-															<Button
-																size='sm'
-																variant='ghost'
-																className='h-7 text-xs text-destructive hover:text-destructive'
-																onClick={() =>
-																	handleDeleteLeaveType(
-																		type
-																	)
-																}>
-																Delete
-															</Button>
-														</div>
 													)}
-												</CardContent>
-											</Card>
+												</div>
+												{canApproveLeave && (
+													<div className='mt-3 flex justify-center gap-2'>
+														<Button
+															size='sm'
+															variant='outline'
+															onClick={() =>
+																openEditLeaveType(
+																	type
+																)
+															}>
+															Edit
+														</Button>
+														<Button
+															size='sm'
+															variant='ghost'
+															className='text-destructive hover:text-destructive'
+															onClick={() =>
+																handleDeleteLeaveType(
+																	type
+																)
+															}>
+															Delete
+														</Button>
+													</div>
+												)}
+											</div>
 										))}
-									</div>
-								)}
-							</CardContent>
-						</Card>
-
-						{/* Total Leaves (Allotted by Employee) - MOVED TO BOTTOM */}
-						<Card>
-							<CardHeader className='flex flex-row items-center justify-between'>
-								<CardTitle className='text-base'>
-									Total Leaves (Allotted by Employee)
-								</CardTitle>
-								{canApproveLeave && (
-									<Button
-										size='sm'
-										onClick={() => openAllotDialog()}>
-										<CalendarDays className='mr-2 h-4 w-4' />
-										Allot Leaves
-									</Button>
-								)}
-							</CardHeader>
-							<CardContent className='space-y-4'>
-								{/* Search Box */}
-								{leaveBalanceGroups.length > 0 && (
-									<div className='relative'>
-										<Search className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground' />
-										<Input
-											placeholder='Search employees...'
-											value={employeeLeaveSearch}
-											onChange={(e) =>
-												setEmployeeLeaveSearch(e.target.value)
-											}
-											className='pl-9'
-										/>
-									</div>
-								)}
-
-								{leaveBalanceGroups.length === 0 ? (
-									<p className='text-sm text-muted-foreground'>
-										No leave balances yet. Allot leaves to
-										employees above.
-									</p>
-								) : (
-									<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3'>
-										{leaveBalanceGroups
-											.filter((group) => {
-												const name =
-													group.employee
-														?.first_name &&
-														group.employee
-															?.last_name
-														? `${group.employee.first_name} ${group.employee.last_name}`
-														: group.employee_id;
-												return name
-													.toLowerCase()
-													.includes(
-														employeeLeaveSearch.toLowerCase()
-													);
-											})
-											.map((group) => {
-												const name =
-													group.employee
-														?.first_name &&
-														group.employee
-															?.last_name
-														? `${group.employee.first_name} ${group.employee.last_name}`
-														: group.employee_id;
-												return (
-													<Card key={`${group.employee_id}-${group.year}`} className='overflow-hidden border border-border/50 hover:shadow-md transition-shadow'>
-														<CardContent className='p-3 space-y-3'>
-															{/* Employee Header */}
-															<div className='pb-2 border-b border-border/50'>
-																<h4 className='font-semibold text-sm truncate'>
-																	{name}
-																</h4>
-																<p className='text-xs text-muted-foreground'>
-																	Year: {group.year}
-																</p>
-															</div>
-
-															{/* Allocated Leaves */}
-															<div className='space-y-1.5'>
-																<p className='text-[10px] uppercase tracking-wide text-muted-foreground font-medium'>Allocated Leaves</p>
-																<div className='space-y-1.5'>
-																	{group.balances.map(
-																		(
-																			bal
-																		) => {
-																			const remaining =
-																				bal.total_days -
-																				bal.used_days;
-																			const typeName =
-																				(
-																					bal.leave_type as LeaveType
-																				)
-																					?.name ??
-																				"Leave";
-																			return (
-																				<div
-																					key={
-																						bal.id
-																					}
-																					className='flex items-center justify-between p-1.5 rounded bg-muted/30'>
-																					<div className='flex-1 min-w-0'>
-																						<p className='text-xs font-medium truncate'>
-																							{typeName}
-																						</p>
-																						<p className='text-[10px] text-muted-foreground'>
-																							{formatRemainingDays(
-																								remaining
-																							)}{" "}
-																							remaining
-																						</p>
-																					</div>
-																					<div className='text-right'>
-																						<p className='text-base font-bold text-primary'>
-																							{formatRemainingDays(
-																								remaining
-																							)}
-																						</p>
-																						<p className='text-[9px] text-muted-foreground'>
-																							of {bal.total_days}
-																						</p>
-																					</div>
-																				</div>
-																			);
-																		}
-																	)}
-																</div>
-															</div>
-
-															{/* Actions */}
-															{canApproveLeave && (
-																<div className='flex gap-1.5 pt-2 border-t border-border/50'>
-																	<Button
-																		size='sm'
-																		variant='outline'
-																		className='flex-1 h-7 text-xs'
-																		onClick={() =>
-																			openAllotDialog(
-																				group.employee_id,
-																				group.year
-																			)
-																		}>
-																		Edit
-																	</Button>
-																	<Button
-																		size='sm'
-																		variant='ghost'
-																		className='flex-1 h-7 text-xs text-destructive hover:text-destructive'
-																		onClick={() =>
-																			handleDeleteBalanceGroup(
-																				group.employee_id,
-																				group.year,
-																				name
-																			)
-																		}>
-																		Delete
-																	</Button>
-																</div>
-															)}
-														</CardContent>
-													</Card>
-												);
-											})}
 									</div>
 								)}
 							</CardContent>
@@ -1230,13 +1199,13 @@ export default function LeavePage() {
 																)
 															}
 															className={`flex w-full items-center gap-2 rounded-md px-2 py-2 text-left text-sm transition-colors ${selected
-																? "bg-primary/15 text-primary"
-																: "hover:bg-muted/80"
+																	? "bg-primary/15 text-primary"
+																	: "hover:bg-muted/80"
 																}`}>
 															<span
 																className={`flex h-4 w-4 shrink-0 items-center justify-center rounded border ${selected
-																	? "border-primary bg-primary"
-																	: "border-muted-foreground"
+																		? "border-primary bg-primary"
+																		: "border-muted-foreground"
 																	}`}>
 																{selected && (
 																	<CheckCircle2 className='h-3 w-3 text-primary-foreground' />
@@ -1553,6 +1522,6 @@ export default function LeavePage() {
 					</Dialog>
 				)}
 			</div>
-		</div >
+		</div>
 	);
 }

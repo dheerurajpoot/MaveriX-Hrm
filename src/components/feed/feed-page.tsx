@@ -67,11 +67,11 @@ export function FeedPage() {
 	// Filter employees for @mention (by name or designation)
 	const mentionCandidates = mentionQuery.trim()
 		? employees.filter((emp) => {
-			const full = `${emp.first_name} ${emp.last_name}`.toLowerCase();
-			const des = (emp.designation || "").toLowerCase();
-			const q = mentionQuery.toLowerCase();
-			return full.includes(q) || des.includes(q);
-		})
+				const full = `${emp.first_name} ${emp.last_name}`.toLowerCase();
+				const des = (emp.designation || "").toLowerCase();
+				const q = mentionQuery.toLowerCase();
+				return full.includes(q) || des.includes(q);
+		  })
 		: employees.slice(0, 8);
 
 	const openMentionAt = (value: string, cursorPos: number) => {
@@ -148,8 +148,9 @@ export function FeedPage() {
 	};
 
 	const initials = employee
-		? `${employee.first_name?.[0] || ""}${employee.last_name?.[0] || ""
-			}`.toUpperCase()
+		? `${employee.first_name?.[0] || ""}${
+				employee.last_name?.[0] || ""
+		  }`.toUpperCase()
 		: "U";
 
 	return (
@@ -163,7 +164,7 @@ export function FeedPage() {
 							<div className='flex gap-4'>
 								<Avatar className='h-12 w-12 shrink-0'>
 									{employee?.avatar_url ? (
-										<AvatarImage className="object-cover"
+										<AvatarImage
 											src={employee.avatar_url}
 											alt={`${employee.first_name} ${employee.last_name}`}
 										/>
@@ -188,7 +189,7 @@ export function FeedPage() {
 											openMentionAt(
 												v,
 												e.target.selectionStart ??
-												v.length
+													v.length
 											);
 										}}
 										onSelect={(e) => {
@@ -207,7 +208,7 @@ export function FeedPage() {
 													Math.min(
 														i + 1,
 														mentionCandidates.length -
-														1
+															1
 													)
 												);
 												return;
@@ -226,7 +227,7 @@ export function FeedPage() {
 												e.preventDefault();
 												insertMention(
 													mentionCandidates[
-													mentionIndex
+														mentionIndex
 													]
 												);
 												return;
@@ -252,11 +253,12 @@ export function FeedPage() {
 																	emp
 																)
 															}
-															className={`flex w-full items-center gap-2 px-3 py-2 text-left text-sm hover:bg-muted focus:bg-muted focus:outline-none ${i ===
+															className={`flex w-full items-center gap-2 px-3 py-2 text-left text-sm hover:bg-muted focus:bg-muted focus:outline-none ${
+																i ===
 																mentionIndex
-																? "bg-muted"
-																: ""
-																}`}>
+																	? "bg-muted"
+																	: ""
+															}`}>
 															<Avatar className='h-7 w-7 shrink-0'>
 																<AvatarFallback className='text-xs'>
 																	{
@@ -282,23 +284,23 @@ export function FeedPage() {
 																	(emp.role !==
 																		"employee" &&
 																		emp.role)) && (
-																		<p className='text-xs text-muted-foreground truncate'>
-																			{emp.role ===
-																				"employee"
-																				? emp.designation ||
-																				"—"
-																				: [
+																	<p className='text-xs text-muted-foreground truncate'>
+																		{emp.role ===
+																		"employee"
+																			? emp.designation ||
+																			  "—"
+																			: [
 																					emp.designation,
 																					emp.role,
-																				]
+																			  ]
 																					.filter(
 																						Boolean
 																					)
 																					.join(
 																						" · "
 																					)}
-																		</p>
-																	)}
+																	</p>
+																)}
 															</div>
 														</button>
 													)
@@ -388,26 +390,26 @@ export function FeedPage() {
 																	{anyPost
 																		.author
 																		?.role ===
-																		"employee"
+																	"employee"
 																		? anyPost
-																			.author
-																			?.designation ||
-																		"—"
+																				.author
+																				?.designation ||
+																		  "—"
 																		: [
-																			anyPost
-																				.author
-																				?.designation,
-																			anyPost
-																				.author
-																				?.role,
-																		]
-																			.filter(
-																				Boolean
-																			)
-																			.join(
-																				" · "
-																			) ||
-																		"—"}{" "}
+																				anyPost
+																					.author
+																					?.designation,
+																				anyPost
+																					.author
+																					?.role,
+																		  ]
+																				.filter(
+																					Boolean
+																				)
+																				.join(
+																					" · "
+																				) ||
+																		  "—"}{" "}
 																	·{" "}
 																	{createdAt.toLocaleDateString()}{" "}
 																	•{" "}
@@ -425,19 +427,19 @@ export function FeedPage() {
 															{canDeletePost(
 																post
 															) && (
-																	<Button
-																		size='icon'
-																		variant='ghost'
-																		className='h-8 w-8 text-muted-foreground hover:text-destructive'
-																		onClick={() =>
-																			handleDeletePost(
-																				post.id
-																			)
-																		}
-																		title='Delete post'>
-																		<Trash2 className='h-3.5 w-3.5' />
-																	</Button>
-																)}
+																<Button
+																	size='icon'
+																	variant='ghost'
+																	className='h-8 w-8 text-muted-foreground hover:text-destructive'
+																	onClick={() =>
+																		handleDeletePost(
+																			post.id
+																		)
+																	}
+																	title='Delete post'>
+																	<Trash2 className='h-3.5 w-3.5' />
+																</Button>
+															)}
 															<button
 																type='button'
 																onClick={() =>
@@ -501,17 +503,17 @@ export function FeedPage() {
 								</DialogTitle>
 								<DialogDescription className='text-xs'>
 									{(selectedPost as any).author?.role ===
-										"employee"
+									"employee"
 										? (selectedPost as any).author
-											?.designation || "—"
+												?.designation || "—"
 										: [
-											(selectedPost as any).author
-												?.designation,
-											(selectedPost as any).author
-												?.role,
-										]
-											.filter(Boolean)
-											.join(" · ") || "—"}{" "}
+												(selectedPost as any).author
+													?.designation,
+												(selectedPost as any).author
+													?.role,
+										  ]
+												.filter(Boolean)
+												.join(" · ") || "—"}{" "}
 									·{" "}
 									{new Date(
 										(selectedPost as any).created_at

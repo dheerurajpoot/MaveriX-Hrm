@@ -14,7 +14,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import {
 	Dialog,
@@ -572,13 +572,13 @@ export default function FinancePage() {
 																	);
 																}}
 																className={`flex w-full items-center gap-2 rounded-md px-2 py-2 text-left text-sm transition-colors ${isSelected
-																	? "bg-primary/15 text-primary"
-																	: "hover:bg-muted/80"
+																		? "bg-primary/15 text-primary"
+																		: "hover:bg-muted/80"
 																	}`}>
 																<span
 																	className={`flex h-4 w-4 shrink-0 items-center justify-center rounded border ${isSelected
-																		? "border-primary bg-primary"
-																		: "border-muted-foreground"
+																			? "border-primary bg-primary"
+																			: "border-muted-foreground"
 																		}`}>
 																	{isSelected && (
 																		<span className='h-2 w-2 rounded-full bg-primary-foreground' />
@@ -760,13 +760,13 @@ export default function FinancePage() {
 																	);
 																}}
 																className={`flex w-full items-center gap-2 rounded-md px-2 py-2 text-left text-sm transition-colors ${selected
-																	? "bg-primary/15 text-primary"
-																	: "hover:bg-muted/80"
+																		? "bg-primary/15 text-primary"
+																		: "hover:bg-muted/80"
 																	}`}>
 																<span
 																	className={`flex h-4 w-4 shrink-0 items-center justify-center rounded border ${selected
-																		? "border-primary bg-primary"
-																		: "border-muted-foreground"
+																			? "border-primary bg-primary"
+																			: "border-muted-foreground"
 																		}`}>
 																	{selected && (
 																		<span className='h-2 w-2 rounded-full bg-primary-foreground' />
@@ -1103,8 +1103,8 @@ export default function FinancePage() {
 																	},
 																	employee: {
 																		name: `${record
-																			.employee
-																			?.first_name ??
+																				.employee
+																				?.first_name ??
 																			""
 																			} ${record
 																				.employee
@@ -1311,129 +1311,128 @@ export default function FinancePage() {
 								No employees found.
 							</p>
 						) : (
-							<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-								{filteredEmployeesForDocs.map((emp) => {
-									const adharUrl = emp.adhar_url;
-									const panUrl = emp.pan_url;
-									const aadharNo = emp.aadhar_number;
-									const panNo = emp.pan_number;
-
-									return (
-										<Card key={emp.id} className='overflow-hidden border border-border/50 hover:shadow-md transition-shadow'>
-											<CardContent className='p-5 space-y-4'>
-												{/* Employee Header */}
-												<div className='flex items-center gap-3 pb-3 border-b border-border/50'>
-													<Avatar className='h-12 w-12 shrink-0'>
-														{emp.avatar_url ? (
-															<AvatarImage className="object-cover"
-																src={emp.avatar_url}
-																alt={`${emp.first_name} ${emp.last_name}`}
-															/>
-														) : null}
-														<AvatarFallback className='bg-primary text-primary-foreground'>
-															{emp.first_name?.[0]}{emp.last_name?.[0]}
-														</AvatarFallback>
-													</Avatar>
-													<div className='flex-1 min-w-0'>
-														<h4 className='font-semibold text-base truncate'>
-															{emp.first_name} {emp.last_name}
-														</h4>
-														<p className='text-xs text-muted-foreground truncate'>
-															{emp.employee_id || "—"}
-														</p>
-													</div>
-												</div>
-
-												{/* Email */}
-												<div className='space-y-1'>
-													<p className='text-[10px] uppercase tracking-wide text-muted-foreground font-medium'>Email</p>
-													<p className='text-sm font-medium truncate'>{emp.email || "—"}</p>
-												</div>
-
-												{/* Documents Section */}
-												<div className='space-y-2'>
-													<p className='text-[10px] uppercase tracking-wide text-muted-foreground font-medium'>Documents</p>
-													<div className='grid grid-cols-2 gap-2'>
-														{/* Aadhar */}
-														<div className='space-y-1.5'>
-															<p className='text-xs text-muted-foreground'>Aadhar</p>
-															{adharUrl ? (
-																<Button
-																	variant='outline'
-																	size='sm'
-																	className='w-full'
-																	asChild>
-																	<a
-																		href={adharUrl}
-																		target='_blank'
-																		rel='noopener noreferrer'>
-																		<ExternalLink className='mr-1.5 h-3.5 w-3.5' />
-																		View
-																	</a>
-																</Button>
-															) : (
-																<p className='text-xs text-muted-foreground px-2 py-1.5 bg-muted/30 rounded text-center'>
-																	No doc
-																</p>
-															)}
-															<p className='text-xs font-mono truncate'>{aadharNo || "—"}</p>
+							<div className='w-[300px] md:w-full overflow-x-auto'>
+								<Table>
+									<TableHeader>
+										<TableRow>
+											<TableHead>Employee</TableHead>
+											<TableHead>Email</TableHead>
+											<TableHead>Aadhar (Doc)</TableHead>
+											<TableHead>PAN (Doc)</TableHead>
+											<TableHead>Aadhar No</TableHead>
+											<TableHead>PAN No</TableHead>
+											<TableHead>Bank Details</TableHead>
+										</TableRow>
+									</TableHeader>
+									<TableBody>
+										{filteredEmployeesForDocs.map((emp) => {
+											const adharUrl = emp.adhar_url;
+											const panUrl = emp.pan_url;
+											const aadharNo = emp.aadhar_number;
+											const panNo = emp.pan_number;
+											const bankParts = [
+												emp.bank_name,
+												emp.bank_account_number,
+												emp.bank_ifsc,
+											].filter(Boolean);
+											const bankDetails =
+												bankParts.length > 0
+													? bankParts.join(" · ")
+													: null;
+											return (
+												<TableRow key={emp.id}>
+													<TableCell>
+														<div className='flex items-center gap-3'>
+															<Avatar className='h-8 w-8'>
+																<AvatarFallback className='text-xs'>
+																	{
+																		emp
+																			.first_name?.[0]
+																	}
+																	{
+																		emp
+																			.last_name?.[0]
+																	}
+																</AvatarFallback>
+															</Avatar>
+															<span className='font-medium'>
+																{emp.first_name}{" "}
+																{emp.last_name}
+															</span>
 														</div>
-
-														{/* PAN */}
-														<div className='space-y-1.5'>
-															<p className='text-xs text-muted-foreground'>PAN</p>
-															{panUrl ? (
-																<Button
-																	variant='outline'
-																	size='sm'
-																	className='w-full'
-																	asChild>
-																	<a
-																		href={panUrl}
-																		target='_blank'
-																		rel='noopener noreferrer'>
-																		<ExternalLink className='mr-1.5 h-3.5 w-3.5' />
-																		View
-																	</a>
-																</Button>
-															) : (
-																<p className='text-xs text-muted-foreground px-2 py-1.5 bg-muted/30 rounded text-center'>
-																	No doc
-																</p>
-															)}
-															<p className='text-xs font-mono truncate'>{panNo || "—"}</p>
-														</div>
-													</div>
-												</div>
-
-												{/* Bank Details Section */}
-												<div className='space-y-1.5 pt-2 border-t border-border/50'>
-													<p className='text-[10px] uppercase tracking-wide text-muted-foreground font-medium'>Bank Details</p>
-													<div className='space-y-1 text-xs'>
-														<div className='flex justify-between'>
-															<span className='text-muted-foreground'>Bank:</span>
-															<span className='font-medium truncate ml-2'>{emp.bank_name || "—"}</span>
-														</div>
-														<div className='flex justify-between'>
-															<span className='text-muted-foreground'>A/C:</span>
-															<span className='font-mono text-xs truncate ml-2'>{emp.bank_account_number || "—"}</span>
-														</div>
-														<div className='flex justify-between'>
-															<span className='text-muted-foreground'>IFSC:</span>
-															<span className='font-mono text-xs truncate ml-2'>{emp.bank_ifsc || "—"}</span>
-														</div>
-														{emp.bank_location && (
-															<div className='flex justify-between'>
-																<span className='text-muted-foreground'>Location:</span>
-																<span className='text-xs truncate ml-2'>{emp.bank_location}</span>
-															</div>
+													</TableCell>
+													<TableCell className='text-sm text-muted-foreground'>
+														{emp.email}
+													</TableCell>
+													<TableCell>
+														{adharUrl ? (
+															<Button
+																variant='outline'
+																size='sm'
+																asChild>
+																<a
+																	href={
+																		adharUrl
+																	}
+																	target='_blank'
+																	rel='noopener noreferrer'>
+																	<ExternalLink className='mr-2 h-4 w-4' />
+																	View
+																</a>
+															</Button>
+														) : (
+															<span className='text-sm text-muted-foreground'>
+																—
+															</span>
 														)}
-													</div>
-												</div>
-											</CardContent>
-										</Card>
-									);
-								})}
+													</TableCell>
+													<TableCell>
+														{panUrl ? (
+															<Button
+																variant='outline'
+																size='sm'
+																asChild>
+																<a
+																	href={
+																		panUrl
+																	}
+																	target='_blank'
+																	rel='noopener noreferrer'>
+																	<ExternalLink className='mr-2 h-4 w-4' />
+																	View
+																</a>
+															</Button>
+														) : (
+															<span className='text-sm text-muted-foreground'>
+																—
+															</span>
+														)}
+													</TableCell>
+													<TableCell className='text-sm tabular-nums'>
+														{aadharNo || "—"}
+													</TableCell>
+													<TableCell className='text-sm tabular-nums'>
+														{panNo || "—"}
+													</TableCell>
+													<TableCell
+														className='max-w-[200px] text-sm text-muted-foreground'
+														title={
+															bankDetails ??
+															undefined
+														}>
+														{/* {bankDetails || "—"} */}
+														{emp.bank_name} <br />
+														{emp.bank_account_number ||
+															"—"}
+														<br />
+														{emp.bank_ifsc} <br />
+														{emp.bank_location}
+													</TableCell>
+												</TableRow>
+											);
+										})}
+									</TableBody>
+								</Table>
 							</div>
 						)}
 					</CardContent>

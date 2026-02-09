@@ -127,7 +127,6 @@
   * {
     @apply border-border outline-ring/50;
   }
-
   body {
     @apply bg-background text-foreground;
   }
@@ -138,14 +137,6 @@
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
-
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
-}
-
-/* Profile card image */
-.profile-card-image {
-  background-image: url("/profilecard_bg.png");
-  background-size: cover;
-  background-position: center;
 }

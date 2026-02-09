@@ -211,8 +211,9 @@ export function ProfilePage() {
 	};
 
 	const initials = employee
-		? `${employee.first_name?.[0] || ""}${employee.last_name?.[0] || ""
-			}`.toUpperCase()
+		? `${employee.first_name?.[0] || ""}${
+				employee.last_name?.[0] || ""
+		  }`.toUpperCase()
 		: "U";
 
 	if (!employee) {
@@ -233,9 +234,9 @@ export function ProfilePage() {
 			<div className='flex-1 space-y-6 p-6'>
 				<div className='grid gap-6 lg:grid-cols-3'>
 					{/* Profile Card */}
-					<Card className='lg:col-span-1 h-[600px]'>
+					<Card className='lg:col-span-1'>
 						<CardContent className='pt-6'>
-							<div className='flex flex-col items-start text-center'>
+							<div className='flex flex-col items-center text-center'>
 								<input
 									ref={avatarInputRef}
 									type='file'
@@ -295,7 +296,9 @@ export function ProfilePage() {
 								<h3 className='mt-4 text-xl font-semibold'>
 									{employee.first_name} {employee.last_name}
 								</h3>
-
+								<p className='text-sm text-muted-foreground'>
+									{employee.designation || "—"}
+								</p>
 								<Badge className='mt-2 capitalize'>
 									{employee.role === "employee"
 										? employee.designation || "—"
@@ -362,10 +365,11 @@ export function ProfilePage() {
 											? "default"
 											: "secondary"
 									}
-									className={`mt-6 ${employee.is_active
-										? "bg-success text-success-foreground"
-										: ""
-										}`}>
+									className={`mt-6 ${
+										employee.is_active
+											? "bg-success text-success-foreground"
+											: ""
+									}`}>
 									{employee.is_active ? "Active" : "Inactive"}
 								</Badge>
 							</div>
@@ -411,8 +415,8 @@ export function ProfilePage() {
 													joining_date:
 														employee.joining_date
 															? String(
-																employee.joining_date
-															).slice(0, 10)
+																	employee.joining_date
+															  ).slice(0, 10)
 															: "",
 												});
 											}}>
@@ -528,8 +532,8 @@ export function ProfilePage() {
 										<p className='rounded-md border border-border bg-muted/50 px-3 py-2 text-sm'>
 											{employee.date_of_birth
 												? new Date(
-													employee.date_of_birth
-												).toLocaleDateString()
+														employee.date_of_birth
+												  ).toLocaleDateString()
 												: "Not set"}
 										</p>
 									)}
@@ -555,8 +559,8 @@ export function ProfilePage() {
 										<p className='rounded-md border border-border bg-muted/50 px-3 py-2 text-sm'>
 											{employee.joining_date
 												? new Date(
-													employee.joining_date
-												).toLocaleDateString()
+														employee.joining_date
+												  ).toLocaleDateString()
 												: "Not set"}
 										</p>
 									)}
