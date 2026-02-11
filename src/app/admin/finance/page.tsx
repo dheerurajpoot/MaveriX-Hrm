@@ -1028,6 +1028,12 @@ export default function FinancePage() {
 												<TableCell>
 													<div className='flex items-center gap-3'>
 														<Avatar className='h-8 w-8'>
+															{record.employee?.avatar_url && (
+																<AvatarImage height={32} width={32} className="object-cover"
+																	src={record.employee.avatar_url}
+																	alt="Profile Pic"
+																/>
+															)}
 															<AvatarFallback className='text-xs'>
 																{
 																	record

@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import {
 	Dialog,
@@ -362,6 +362,15 @@ export default function TeamsPage() {
 									{team.leader && (
 										<div className='flex items-center gap-3 rounded-lg bg-muted/50 p-3'>
 											<Avatar className='h-10 w-10'>
+												{team.leader.avatar_url && (
+													<AvatarImage
+														height={32}
+														width={32}
+														className='object-cover'
+														src={team.leader.avatar_url}
+														alt='Profile Pic'
+													/>
+												)}
 												<AvatarFallback className='bg-primary text-primary-foreground'>
 													{
 														team.leader
@@ -412,6 +421,15 @@ export default function TeamsPage() {
 															className='flex items-center justify-between rounded-lg border border-border p-2'>
 															<div className='flex items-center gap-2'>
 																<Avatar className='h-7 w-7'>
+																	{member.employee?.avatar_url && (
+																		<AvatarImage
+																			height={32}
+																			width={32}
+																			className='object-cover'
+																			src={member.employee.avatar_url}
+																			alt='Profile Pic'
+																		/>
+																	)}
 																	<AvatarFallback className='text-xs'>
 																		{
 																			member
@@ -613,6 +631,15 @@ export default function TeamsPage() {
 																	: ""
 															}`}>
 															<Avatar className='h-8 w-8'>
+																{emp.avatar_url && (
+																	<AvatarImage
+																		height={32}
+																		width={32}
+																		className='object-cover'
+																		src={emp.avatar_url}
+																		alt='Profile Pic'
+																	/>
+																)}
 																<AvatarFallback className='text-xs'>
 																	{
 																		emp

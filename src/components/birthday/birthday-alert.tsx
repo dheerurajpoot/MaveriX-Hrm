@@ -33,6 +33,7 @@ export function BirthdayAlert({ employee, onDismiss }: BirthdayAlertProps) {
 						<Avatar className='h-24 w-24 border-4 border-pink-300 dark:border-pink-600 shadow-lg mb-4'>
 							{employee.avatar_url ? (
 								<AvatarImage
+									className='object-cover'
 									src={employee.avatar_url}
 									alt={name}
 								/>

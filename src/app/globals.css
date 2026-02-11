@@ -134,12 +134,14 @@
 }
 
 /* Hide scrollbar for horizontal nav while keeping scroll */
-.scrollbar-hide {
+.scrollbar-hide,
+.hide-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
 
-.scrollbar-hide::-webkit-scrollbar {
+.scrollbar-hide::-webkit-scrollbar,
+.hide-scrollbar::-webkit-scrollbar {
   display: none;
 }
 
@@ -147,5 +149,6 @@
 .profile-card-image {
   background-image: url("/profilecard_bg.png");
   background-size: cover;
+  background-repeat: no-repeat;
   background-position: center;
 }

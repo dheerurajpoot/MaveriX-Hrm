@@ -21,7 +21,7 @@ import type { Employee } from "@/lib/types";
 
 type EmployeeMention = Pick<
 	Employee,
-	"id" | "first_name" | "last_name" | "designation" | "role"
+	"id" | "first_name" | "last_name" | "avatar_url" | "designation" | "role"
 >;
 
 export function FeedPage() {
@@ -59,7 +59,7 @@ export function FeedPage() {
 		const supabase = createClient();
 		supabase
 			.from("employees")
-			.select("id, first_name, last_name, designation, role")
+			.select("id, first_name, last_name, avatar_url, designation, role")
 			.eq("is_active", true)
 			.then(({ data }) => setEmployees(data || []));
 	}, []);
@@ -258,6 +258,12 @@ export function FeedPage() {
 																: ""
 																}`}>
 															<Avatar className='h-7 w-7 shrink-0'>
+																{emp?.avatar_url && (
+																<AvatarImage height={32} width={32} className="object-cover"
+																	src={emp.avatar_url}
+																	alt="Profile Pic"
+																/>
+															)}
 																<AvatarFallback className='text-xs'>
 																	{
 																		emp

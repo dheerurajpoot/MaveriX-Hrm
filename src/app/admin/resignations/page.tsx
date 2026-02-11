@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import {
 	Dialog,
@@ -287,6 +287,12 @@ export default function ResignationsPage() {
 													<TableCell>
 														<div className='flex items-center gap-3'>
 															<Avatar className='h-9 w-9'>
+																{resignation.employee?.avatar_url && (
+																	<AvatarImage height={32} width={32} className="object-cover"
+																		src={resignation.employee.avatar_url}
+																		alt="Profile Pic"
+																	/>
+																)}
 																<AvatarFallback className='text-xs'>
 																	{
 																		resignation
@@ -386,6 +392,12 @@ export default function ResignationsPage() {
 							<div className='space-y-4 py-4'>
 								<div className='flex items-center gap-4'>
 									<Avatar className='h-12 w-12'>
+										{selectedResignation.employee?.avatar_url && (
+											<AvatarImage height={32} width={32} className="object-cover"
+												src={selectedResignation.employee.avatar_url}
+												alt="Profile Pic"
+											/>
+										)}
 										<AvatarFallback>
 											{
 												selectedResignation.employee

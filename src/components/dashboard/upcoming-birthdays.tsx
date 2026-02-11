@@ -177,6 +177,7 @@ export function UpcomingBirthdays() {
 											}`}>
 											{employee.avatar_url ? (
 												<AvatarImage
+												className="object-cover"
 													src={employee.avatar_url}
 													alt={name}
 												/>

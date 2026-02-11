@@ -6,7 +6,7 @@ import { createClient } from "@/lib/supabase/client";
 import { DashboardHeader } from "@/components/dashboard/header";
 import { UpcomingBirthdays } from "@/components/dashboard/upcoming-birthdays";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@/contexts/user-context";
@@ -830,6 +830,9 @@ export default function HRDashboardPage() {
 									{todayActivities.map((a) => (
 										<li key={a.id} className="flex items-center gap-3 rounded-xl border border-border/50 bg-card/80 p-3 transition-colors hover:bg-muted/30 dark:hover:bg-muted/20">
 											<Avatar className="h-9 w-9 shrink-0 border-2 border-background shadow-sm">
+												{a.employee?.avatar_url ? (
+													<AvatarImage className="object-cover" src={a.employee.avatar_url} alt={a.employee?.first_name} />
+												) : null}
 												<AvatarFallback className="text-xs font-medium bg-muted">{a.employee?.first_name?.[0]}{a.employee?.last_name?.[0]}</AvatarFallback>
 											</Avatar>
 											<div className="min-w-0 flex-1">
@@ -869,6 +872,9 @@ export default function HRDashboardPage() {
 									{teams.map((team) => (
 										<li key={team.id} className="flex items-center gap-3 rounded-xl border border-border/50 p-3 hover:bg-muted/30 transition-colors">
 											<Avatar className="h-9 w-9 shrink-0">
+												{team.leader?.avatar_url ? (
+													<AvatarImage className="object-cover" src={team.leader.avatar_url} alt={team.leader?.first_name} />
+												) : null}
 												<AvatarFallback className="text-xs bg-violet-500/15 text-violet-600 dark:text-violet-400">{team.leader?.first_name?.[0]}{team.leader?.last_name?.[0]}{!team.leader && team.name?.[0]}</AvatarFallback>
 											</Avatar>
 											<div className="flex-1 min-w-0">

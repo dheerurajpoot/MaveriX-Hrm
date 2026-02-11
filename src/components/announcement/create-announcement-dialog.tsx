@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Megaphone, Send, BarChart3, Calendar } from "lucide-react";
+import { Megaphone, Send, Calendar } from "lucide-react";
 
 function todayStr() {
 	return new Date().toISOString().slice(0, 10);

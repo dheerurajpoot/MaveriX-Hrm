@@ -7,7 +7,7 @@ import { DashboardHeader } from "@/components/dashboard/header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import {
 	Table,
@@ -33,7 +33,6 @@ import {
 	ChevronRight,
 } from "lucide-react";
 import type { Attendance, Employee } from "@/lib/types";
-import { StatCard } from "@/components/dashboard/stat-card";
 import { applyLatePolicyForAllEmployees } from "./actions";
 import { toast } from "react-hot-toast";
 
@@ -596,6 +595,12 @@ export default function AttendancePage() {
 												<TableCell>
 													<div className='flex items-center gap-3'>
 														<Avatar className='h-9 w-9'>
+															{record.employee?.avatar_url && (
+																<AvatarImage height={32} width={32} className="object-cover"
+																	src={record.employee.avatar_url}
+																	alt="Profile Pic"
+																/>
+															)}
 															<AvatarFallback className='text-xs bg-primary/10 text-primary'>
 																{
 																	record

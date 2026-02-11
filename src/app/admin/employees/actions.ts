@@ -27,7 +27,7 @@ async function nextEmployeeId(
 	const year = parsed.getFullYear();
 	const prefix = `${year}EMP-`;
 
-	// Serial is global: find max serial across all employees (any year), then +1
+	// Get all existing employee IDs to find the global max serial
 	const { data, error } = await supabase
 		.from("employees")
 		.select("employee_id")
@@ -45,7 +45,10 @@ async function nextEmployeeId(
 		)
 		.map((id) => parseInt(id.replace(/^\d{4}EMP-/, ""), 10))
 		.filter((n) => !Number.isNaN(n));
-	const nextSerial = serials.length > 0 ? Math.max(...serials) + 1 : 1;
+	
+	// Find the maximum serial number used across ALL years
+	const maxSerial = serials.length > 0 ? Math.max(...serials) : 0;
+	const nextSerial = maxSerial + 1;
 
 	return `${prefix}${String(nextSerial).padStart(3, "0")}`;
 }

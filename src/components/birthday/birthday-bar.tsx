@@ -30,6 +30,7 @@ export function BirthdayBar({ birthdayEmployees }: BirthdayBarProps) {
 						<Avatar className='h-6 w-6 border border-pink-200 dark:border-pink-700'>
 							{emp.avatar_url ? (
 								<AvatarImage
+									className='object-cover'
 									src={emp.avatar_url}
 									alt={`${emp.first_name} ${emp.last_name}`}
 								/>

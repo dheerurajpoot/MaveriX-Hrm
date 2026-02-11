@@ -9,7 +9,6 @@ import { useUser } from "../../contexts/user-context";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import {
-	Building2,
 	LayoutDashboard,
 	Users,
 	Clock,

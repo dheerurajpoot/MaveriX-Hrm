@@ -10,20 +10,15 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { useUser } from "../../../contexts/user-context";
-import Link from "next/link";
 import {
 	Clock,
 	Calendar,
 	CheckCircle2,
-	Timer,
 	CalendarDays,
 	Users,
-	User,
 	Mail,
 	Building2,
 	CalendarCheck,
-	ArrowRight,
-	Plus,
 	Square,
 	Globe,
 } from "lucide-react";
@@ -31,7 +26,6 @@ import type {
 	Attendance,
 	LeaveBalance,
 	LeaveType,
-	TeamMember,
 } from "@/lib/types";
 interface LeaveBalanceWithType extends LeaveBalance {
 	leave_type?: LeaveType;
@@ -42,6 +36,7 @@ interface MinimalTeamMember {
 	employee_id: string;
 	first_name: string;
 	last_name: string;
+	avatar_url: string | null;
 	designation: string | null;
 	email: string;
 	isSelf: boolean;
@@ -180,7 +175,7 @@ export default function EmployeeDashboardPage() {
 			const { data: teamData } = await supabase
 				.from("teams")
 				.select(
-					"leader_id, leader:employees!teams_leader_id_fkey(id, first_name, last_name, designation, email)"
+					"leader_id, leader:employees!teams_leader_id_fkey(id, first_name, last_name, avatar_url, designation, email)"
 				)
 				.eq("id", teamId)
 				.single();
@@ -191,7 +186,7 @@ export default function EmployeeDashboardPage() {
 			const { data: teamMembersData } = await supabase
 				.from("team_members")
 				.select(
-					"id, employee:employees(id, first_name, last_name, designation, email)"
+					"id, employee:employees(id, first_name, last_name, avatar_url, designation, email)"
 				)
 				.eq("team_id", teamId)
 				.limit(10);
@@ -203,6 +198,7 @@ export default function EmployeeDashboardPage() {
 					first_name: m.employee.first_name,
 					last_name: m.employee.last_name,
 					designation: m.employee.designation,
+					avatar_url: m.employee.avatar_url,
 					email: m.employee.email,
 					isSelf: m.employee.id === employee.id,
 					isLeader: m.employee.id === leaderId,
@@ -219,6 +215,7 @@ export default function EmployeeDashboardPage() {
 					first_name: leaderEmp.first_name,
 					last_name: leaderEmp.last_name,
 					designation: leaderEmp.designation ?? null,
+					avatar_url: leaderEmp.avatar_url ?? null,
 					email: leaderEmp.email ?? "",
 					isSelf: leaderId === employee.id,
 					isLeader: true,
@@ -686,6 +683,12 @@ export default function EmployeeDashboardPage() {
 											className={`flex items-center gap-3 rounded-xl border px-3 py-2.5 transition-colors ${m.isSelf ? "border-primary/50 bg-primary/5" : "border-border/50 bg-card/60 hover:bg-muted/30"
 												}`}>
 											<Avatar className="h-8 w-8 shrink-0">
+												{m.avatar_url ? (
+													<AvatarImage className="object-cover"
+														src={m.avatar_url}
+														alt={`${m.first_name} ${m.last_name}`}
+													/>
+												) : null}
 												<AvatarFallback className="text-xs bg-indigo-500/15 text-indigo-600 dark:text-indigo-400">{m.first_name[0]}{m.last_name[0]}</AvatarFallback>
 											</Avatar>
 											<div className="flex-1 min-w-0">

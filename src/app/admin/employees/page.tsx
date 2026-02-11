@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import toast from "react-hot-toast";
 import { createClient } from "@/lib/supabase/client";
@@ -64,6 +64,7 @@ export default function EmployeesPage() {
 		() => searchParams.get("q") || ""
 	);
 	const [roleFilter, setRoleFilter] = useState<string>("all");
+	const [designationFilter, setDesignationFilter] = useState<string>("all");
 	const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 	const [editingEmployee, setEditingEmployee] = useState<Employee | null>(
 		null
@@ -127,10 +128,12 @@ export default function EmployeesPage() {
 			filtered = filtered.filter((emp) => emp.role === roleFilter);
 		}
 
-		// Exclude admin users (in case fetch didn't filter)
-		// filtered = filtered.filter((emp) => emp.role !== "admin");
+		if (designationFilter !== "all") {
+			filtered = filtered.filter((emp) => emp.designation === designationFilter);
+		}
+
 		setFilteredEmployees(filtered);
-	}, [employees, searchQuery, roleFilter]);
+	}, [employees, searchQuery, roleFilter, designationFilter]);
 
 	const fetchEmployees = async () => {
 		const supabase = createClient();
@@ -281,8 +284,21 @@ export default function EmployeesPage() {
 		}
 	};
 
+	// Get unique designations and their counts
+	const designationStats = useMemo(() => {
+		const stats = new Map<string, number>();
+		stats.set("all", employees.length);
+		employees.forEach((emp) => {
+			const desig = emp.designation || "No Designation";
+			stats.set(desig, (stats.get(desig) || 0) + 1);
+		});
+		return stats;
+	}, [employees]);
+
+	const designations = Array.from(designationStats.keys()).filter(d => d !== "all");
+
 	return (
-		<div className='flex flex-col'>
+		<div className=' flex flex-col'>
 			<DashboardHeader
 				title='Employees'
 				description='Manage all employees'
@@ -523,6 +539,51 @@ export default function EmployeesPage() {
 					</CardContent>
 				</Card>
 
+				{/* Designation Tabs */}
+				{designations.length > 0 && (
+					<div className="overflow-hidden">
+						<div className="flex gap-1 flex-wrap pb-1">
+							<button
+								onClick={() => setDesignationFilter("all")}
+								className={`inline-flex items-center gap-2 px-2 py-2 rounded-full text-sm font-medium transition-colors shrink-0 ${
+									designationFilter === "all"
+										? "bg-primary text-primary-foreground"
+										: "bg-muted hover:bg-muted/80 text-muted-foreground"
+								}`}
+							>
+								All Employees
+								<span className={`text-xs px-2 py-0.5 rounded-full ${
+									designationFilter === "all"
+										? "bg-primary-foreground/20 text-primary-foreground"
+										: "bg-background text-foreground"
+								}`}>
+									{designationStats.get("all")}
+								</span>
+							</button>
+							{designations.map((desig) => (
+								<button
+									key={desig}
+									onClick={() => setDesignationFilter(desig)}
+									className={`inline-flex items-center gap-2 px-2 py-1 rounded-full text-sm font-medium transition-colors shrink-0 ${
+										designationFilter === desig
+											? "bg-primary text-primary-foreground"
+											: "bg-muted hover:bg-muted/80 text-muted-foreground"
+									}`}
+								>
+									{desig}
+									<span className={`text-xs px-2 py-0.5 rounded-full ${
+										designationFilter === desig
+											? "bg-primary-foreground/20 text-primary-foreground"
+											: "bg-background text-foreground"
+									}`}>
+										{designationStats.get(desig)}
+									</span>
+								</button>
+							))}
+						</div>
+					</div>
+				)}
+
 				{/* Employees Table */}
 				<Card>
 					<CardHeader>
@@ -565,9 +626,9 @@ export default function EmployeesPage() {
 											<TableRow key={employee.id}>
 												<TableCell>
 													<div className='flex items-center gap-3'>
-														<Avatar className="h-9 w-9">
+														<Avatar>
 															{employee.avatar_url && (
-																<AvatarImage className="object-cover"
+																<AvatarImage height={32} width={32} className="object-cover"
 																	src={employee.avatar_url}
 																	alt={`${employee.first_name} ${employee.last_name}`}
 																/>
