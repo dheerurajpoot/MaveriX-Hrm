@@ -373,7 +373,7 @@ export default function AdminDashboardPage() {
 									<p className="text-xs text-muted-foreground mt-1 max-w-[180px]">Attendance check-ins will appear here</p>
 								</div>
 							) : (
-								<ul className="space-y-2 max-h-[240px] overflow-y-auto pr-1">
+								<ul className="space-y-2 max-h-[370px] overflow-y-auto pr-1">
 									{todayActivities.map((a) => (
 										<li key={a.id} className="flex items-center gap-3 rounded-xl border border-border/50 bg-card/80 p-3 transition-colors hover:bg-muted/30 dark:hover:bg-muted/20">
 											<Avatar className="h-9 w-9 shrink-0 border-2 border-background shadow-sm">
@@ -419,7 +419,7 @@ export default function AdminDashboardPage() {
 							{teams.length === 0 ? (
 								<p className="text-sm text-muted-foreground text-center py-10 rounded-xl bg-muted/20">No teams yet</p>
 							) : (
-								<ul className="space-y-2 max-h-[240px] overflow-y-auto pr-1">
+								<ul className="space-y-2 max-h-[370px] overflow-y-auto pr-1">
 									{teams.map((team) => (
 										<li key={team.id} className="flex items-center gap-3 rounded-xl border border-border/50 p-3 hover:bg-muted/30 transition-colors">
 											<Avatar className="h-9 w-9 shrink-0">

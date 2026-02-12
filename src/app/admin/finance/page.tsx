@@ -110,7 +110,7 @@ export default function FinancePage() {
 		const { data } = await supabase
 			.from("finance_records")
 			.select(
-				"*, employee:employees!finance_records_employee_id_fkey(id, first_name, last_name, designation, email)"
+				"*, employee:employees!finance_records_employee_id_fkey(id, first_name, last_name, avatar_url, designation, email)"
 			)
 			.order("year", { ascending: false })
 			.order("month", { ascending: false })
@@ -147,7 +147,7 @@ export default function FinancePage() {
 		const { data } = await supabase
 			.from("employees")
 			.select(
-				"id, first_name, last_name, email, designation, adhar_url, pan_url, bank_name, bank_account_number, bank_ifsc, bank_location, aadhar_number, pan_number"
+				"id, first_name, last_name, email, avatar_url, designation, adhar_url, pan_url, bank_name, bank_account_number, bank_ifsc, bank_location, aadhar_number, pan_number"
 			)
 			.eq("is_active", true)
 			.neq("role", "admin")
@@ -155,26 +155,6 @@ export default function FinancePage() {
 		setEmployees((data as Employee[]) || []);
 	};
 
-	// Latest salary per employee (any month, all statuses) for doc table
-	const latestSalaryByEmployeeId = records.reduce((acc, r) => {
-		if (r.type !== "salary" || !r.employee_id) return acc;
-		const existing = acc[r.employee_id];
-		const rYear = r.year ?? 0;
-		const rMonth = r.month ?? 0;
-		if (
-			!existing ||
-			rYear > existing.year ||
-			(rYear === existing.year && rMonth > existing.month)
-		) {
-			acc[r.employee_id] = {
-				amount: Number(r.amount),
-				status: r.status ?? "pending",
-				year: rYear,
-				month: rMonth,
-			};
-		}
-		return acc;
-	}, {} as Record<string, { amount: number; status: string; year: number; month: number }>);
 
 	const filteredEmployeesForDocs = employees.filter((emp) => {
 		const matchesSearch =

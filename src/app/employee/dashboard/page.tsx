@@ -287,13 +287,6 @@ export default function EmployeeDashboardPage() {
 		};
 	};
 
-	const formatCurrentTimeAMPM = (d: Date) => {
-		return d.toLocaleTimeString("en-US", {
-			hour: "2-digit",
-			minute: "2-digit",
-			hour12: true,
-		});
-	};
 
 	const getCurrentTimeParts = (d: Date) => {
 		const hours12 = d.getHours() % 12 || 12;
@@ -676,7 +669,7 @@ export default function EmployeeDashboardPage() {
 							) : teamMembers.length === 0 ? (
 								<p className="text-sm text-muted-foreground rounded-xl bg-muted/20 py-8 text-center">You are not assigned to any team yet.</p>
 							) : (
-								<div className="space-y-2 max-h-56 overflow-y-auto pr-1">
+								<div className="space-y-2 max-h-88 overflow-y-auto pr-1">
 									{teamMembers.map((m) => (
 										<div
 											key={m.id}
