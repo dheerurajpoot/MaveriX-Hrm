@@ -59,10 +59,20 @@ function calcDays(
 	end: string,
 	halfDay?: boolean | null
 ): number {
-	if (halfDay) return 0.5;
+	if (halfDay) return 1; // Half-day leave consumes 1 full day from leave balance
 	const s = new Date(start);
 	const e = new Date(end);
 	return Math.ceil((e.getTime() - s.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+}
+
+function formatLeaveDays(
+	start: string,
+	end: string,
+	halfDay?: boolean | null
+): string {
+	if (halfDay) return "half day";
+	const days = calcDays(start, end, halfDay);
+	return `${Math.round(days)} day${days !== 1 ? "s" : ""}`;
 }
 
 function isMedicalLeave(type?: LeaveType | null): boolean {
@@ -584,15 +594,11 @@ export default function EmployeeLeavePage() {
 														<strong>
 															Total leave:
 														</strong>{" "}
-														{requestDays % 1 === 0
-															? requestDays
-															: requestDays.toFixed(
-																	1
-															  )}{" "}
-														day
-														{requestDays !== 1
-															? "s"
-															: ""}
+														{formatLeaveDays(
+															formData.start_date,
+															formData.end_date,
+															formData.half_day
+														)}
 													</p>
 													<p>
 														<strong>
@@ -801,17 +807,11 @@ export default function EmployeeLeavePage() {
 												</TableCell>
 												<TableCell>
 													<Badge variant='secondary'>
-														{(() => {
-															const d = calcDays(
-																request.start_date,
-																request.end_date,
-																request.half_day
-															);
-															return d % 1 === 0
-																? d
-																: d.toFixed(1);
-														})()}{" "}
-														days
+														{formatLeaveDays(
+															request.start_date,
+															request.end_date,
+															request.half_day
+														)}
 													</Badge>
 												</TableCell>
 												<TableCell className='max-w-[200px] truncate text-sm'>
