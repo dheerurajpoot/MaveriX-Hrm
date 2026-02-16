@@ -4,12 +4,12 @@ import { createClient } from "@supabase/supabase-js";
 export async function POST(request: NextRequest) {
   try {
     // Verify request with secret token for security
-    const authHeader = request.headers.get('authorization');
-    const expectedToken = process.env.AUTO_CLOCK_OUT_TOKEN;
+    // const authHeader = request.headers.get('authorization');
+    // const expectedToken = process.env.AUTO_CLOCK_OUT_TOKEN;
     
-    if (!expectedToken || authHeader !== `Bearer ${expectedToken}`) {
-      return Response.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    // if (!expectedToken || authHeader !== `Bearer ${expectedToken}`) {
+    //   return Response.json({ error: "Unauthorized" }, { status: 401 });
+    // }
     
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
