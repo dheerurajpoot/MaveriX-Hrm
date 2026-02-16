@@ -70,7 +70,7 @@ export default function AttendancePage() {
 			if (cancelled) return;
 			await fetchEmployees();
 			if (cancelled) return;
-			await autoClockOutUnmarked();
+			// Auto clock-out is now handled by API endpoint and cron job
 		})();
 		return () => {
 			cancelled = true;
@@ -100,43 +100,7 @@ export default function AttendancePage() {
 		setEmployees(data || []);
 	};
 
-	// Auto clock-out records that have clock_in but no clock_out when viewing today after auto_clock_out_time
-	const autoClockOutUnmarked = async () => {
-		if (!settings?.auto_clock_out_time) return;
-		const today = toLocalDateStr(new Date());
-		if (
-			selectedDate !== today ||
-			!isNowAfterTime(selectedDate, settings.auto_clock_out_time)
-		) {
-			return;
-		}
-		const supabase = createClient();
-		const { data: unclosed } = await supabase
-			.from("attendance")
-			.select("id, clock_in")
-			.eq("date", selectedDate)
-			.not("clock_in", "is", null)
-			.is("clock_out", null);
-		if (!unclosed?.length) return;
-		const clockOutAt = getDateAtTime(
-			selectedDate,
-			settings.auto_clock_out_time
-		);
-		const clockOutDate = new Date(clockOutAt);
-		for (const r of unclosed) {
-			const clockIn = new Date(r.clock_in);
-			const totalHours =
-				(clockOutDate.getTime() - clockIn.getTime()) / (1000 * 60 * 60);
-			await supabase
-				.from("attendance")
-				.update({
-					clock_out: clockOutAt,
-					total_hours: parseFloat(totalHours.toFixed(2)),
-				})
-				.eq("id", r.id);
-		}
-		await fetchAttendance();
-	};
+	
 
 	const handleClockOut = async (attendanceId: string) => {
 		const supabase = createClient();

@@ -562,7 +562,7 @@ export default function LeavePage() {
 		endDate: string,
 		halfDay?: boolean | null
 	) => {
-		if (halfDay) return 0.5;
+		if (halfDay) return 1; // Half-day leave consumes 1 full day from leave balance
 		const start = new Date(startDate);
 		const end = new Date(endDate);
 		const diffTime = Math.abs(end.getTime() - start.getTime());
@@ -574,10 +574,9 @@ export default function LeavePage() {
 		endDate: string,
 		halfDay?: boolean | null
 	) => {
+		if (halfDay) return "half day";
 		const days = calculateDays(startDate, endDate, halfDay);
-		return days === 0.5
-			? "half day"
-			: `${Math.round(days)} day${days !== 1 ? "s" : ""}`;
+		return `${Math.round(days)} day${days !== 1 ? "s" : ""}`;
 	};
 
 	const formatRemainingDays = (days: number) => {
@@ -1433,8 +1432,7 @@ export default function LeavePage() {
 										})}
 									</div>
 									<p className='text-[11px] text-muted-foreground'>
-										Leave blank to skip a leave type. Use
-										decimals for half-days (e.g. 0.5).
+										Leave blank to skip a leave type.
 									</p>
 								</div>
 								{allotError && (

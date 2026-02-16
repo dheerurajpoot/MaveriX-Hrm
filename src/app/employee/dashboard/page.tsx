@@ -9,6 +9,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from "@/components/ui/dialog";
 import { useUser } from "../../../contexts/user-context";
 import {
 	Clock,
@@ -76,6 +85,7 @@ export default function EmployeeDashboardPage() {
 		approvedLeaves: 0,
 	});
 	const [now, setNow] = useState(() => new Date());
+	const [isClockOutDialogOpen, setIsClockOutDialogOpen] = useState(false);
 
 	useEffect(() => {
 		if (employee) {
@@ -263,6 +273,11 @@ export default function EmployeeDashboardPage() {
 			.eq("id", todayAttendance.id);
 
 		await fetchData();
+		setIsClockOutDialogOpen(false); // Close the dialog after clocking out
+	};
+
+	const confirmClockOut = () => {
+		setIsClockOutDialogOpen(true);
 	};
 
 	const formatTime = (timeString: string | null) => {
@@ -475,10 +490,32 @@ export default function EmployeeDashboardPage() {
 							{/* Primary action: Clock Out (red) / Clock In (blue) / Completed badge */}
 							<div className="flex justify-center">
 								{todayAttendance?.clock_in && !todayAttendance.clock_out ? (
-									<Button onClick={handleClockOut} className="gap-3 rounded-xl bg-red-600 hover:bg-red-700 text-white px-8 py-8 text-lg font-semibold w-[100%]">
-										<Square className="h-5 w-5" />
-										Clock Out
-									</Button>
+									<>
+										<Dialog open={isClockOutDialogOpen} onOpenChange={setIsClockOutDialogOpen}>
+											<DialogTrigger asChild>
+												<Button onClick={confirmClockOut} className="gap-3 rounded-xl bg-red-600 hover:bg-red-700 text-white px-8 py-8 text-lg font-semibold w-[100%]">
+													<Square className="h-5 w-5" />
+													Clock Out
+												</Button>
+											</DialogTrigger>
+											<DialogContent>
+												<DialogHeader>
+													<DialogTitle>Confirm Clock Out</DialogTitle>
+													<DialogDescription>
+														Are you sure you want to clock out? This action will record your departure time and calculate total hours worked.
+													</DialogDescription>
+												</DialogHeader>
+												<DialogFooter>
+													<Button variant="outline" onClick={() => setIsClockOutDialogOpen(false)}>
+														Cancel
+													</Button>
+													<Button onClick={handleClockOut} className="bg-red-600 hover:bg-red-700">
+														Clock Out
+													</Button>
+												</DialogFooter>
+											</DialogContent>
+										</Dialog>
+									</>
 								) : todayAttendance ? (
 									<Badge className="bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300 border-0 rounded-lg gap-1 px-4 py-2">
 										<CheckCircle2 className="h-3.5 w-3.5" />

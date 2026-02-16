@@ -2,11 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 
-/**
- * Apply late policy deduction for an employee in a given month.
- * Counts late days in the month, calculates deduction based on settings,
- * and updates leave balance and late_deductions_log.
- */
+
 export async function applyLatePolicyDeduction(
 	employeeId: string,
 	year: number,

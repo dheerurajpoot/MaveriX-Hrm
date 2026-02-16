@@ -50,6 +50,7 @@ import {
 	FileText,
 	ExternalLink,
 	Download,
+	Trash2,
 } from "lucide-react";
 import type { FinanceRecord, Employee } from "@/lib/types";
 import { useUser } from "../../../contexts/user-context";
@@ -71,6 +72,8 @@ export default function FinancePage() {
 	const [isLoading, setIsLoading] = useState(true);
 	const [isAllocateSlipDialogOpen, setIsAllocateSlipDialogOpen] =
 		useState(false);
+	const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+	const [recordToDelete, setRecordToDelete] = useState<FinanceWithEmployee | null>(null);
 	const [selectedEmployeesForSlip, setSelectedEmployeesForSlip] = useState<
 		string[]
 	>([]);
@@ -209,6 +212,26 @@ export default function FinancePage() {
 				month: new Date().getMonth() + 1,
 				year: new Date().getFullYear(),
 			});
+		}
+	};
+
+	const handleDeleteRecord = async () => {
+		if (!recordToDelete) return;
+		
+		const supabase = createClient();
+		
+		const { error } = await supabase
+			.from("finance_records")
+			.delete()
+			.eq("id", recordToDelete.id);
+		
+		if (error) {
+			toast.error("Failed to delete record: " + error.message);
+		} else {
+			toast.success("Record deleted successfully");
+			await fetchRecords();
+			setIsDeleteDialogOpen(false);
+			setRecordToDelete(null);
 		}
 	};
 
@@ -963,6 +986,36 @@ export default function FinancePage() {
 								</div>
 							</DialogContent>
 						</Dialog>
+
+						<Dialog
+							open={isDeleteDialogOpen}
+							onOpenChange={(open) => {
+								setIsDeleteDialogOpen(open);
+								if (!open) setRecordToDelete(null);
+							}}>
+							<DialogContent>
+								<DialogHeader>
+									<DialogTitle>
+										Confirm Delete
+									</DialogTitle>
+									<DialogDescription>
+										Are you sure you want to delete this {recordToDelete?.type} record for {recordToDelete?.employee?.first_name} {recordToDelete?.employee?.last_name}? This action cannot be undone.
+									</DialogDescription>
+								</DialogHeader>
+								<div className="flex justify-end gap-3 pt-4">
+									<Button
+										variant="outline"
+										onClick={() => setIsDeleteDialogOpen(false)}>
+										Cancel
+									</Button>
+									<Button
+										variant="destructive"
+										onClick={handleDeleteRecord}>
+										Delete
+									</Button>
+								</div>
+							</DialogContent>
+						</Dialog>
 					</CardContent>
 				</Card>
 
@@ -1267,6 +1320,16 @@ export default function FinancePage() {
 																Mark Paid
 															</Button>
 														)}
+													<Button
+														size='sm'
+														variant='outline'
+														onClick={() => {
+															setRecordToDelete(record);
+															setIsDeleteDialogOpen(true);
+														}}
+														className='ml-2'>
+														<Trash2 className='h-4 w-4' />
+													</Button>
 												</TableCell>
 											</TableRow>
 										))}
