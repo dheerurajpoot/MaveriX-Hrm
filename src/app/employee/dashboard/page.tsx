@@ -175,24 +175,49 @@ export default function EmployeeDashboardPage() {
 
 		// Fetch minimal team info (first team only, up to a few members + leader)
 		setIsTeamLoading(true);
-		const { data: membershipData } = await supabase
-			.from("team_members")
-			.select("team_id")
-			.eq("employee_id", employee.id)
+		
+		// First, check if employee is a team leader
+		const { data: leaderTeams } = await supabase
+			.from("teams")
+			.select(
+				"id, leader_id, leader:employees!teams_leader_id_fkey(id, first_name, last_name, avatar_url, designation, email)"
+			)
+			.eq("leader_id", employee.id)
 			.limit(1);
 
-		const teamId = membershipData?.[0]?.team_id as string | undefined;
-		if (teamId) {
-			const { data: teamData } = await supabase
-				.from("teams")
-				.select(
-					"leader_id, leader:employees!teams_leader_id_fkey(id, first_name, last_name, avatar_url, designation, email)"
-				)
-				.eq("id", teamId)
-				.single();
+		let teamId: string | undefined;
+		let teamData: any = null;
 
-			const leaderId = (teamData as any)?.leader_id as string | null;
-			const leaderEmp = (teamData as any)?.leader;
+		if (leaderTeams && leaderTeams.length > 0) {
+			// Employee is a team leader - we already have team data
+			teamId = leaderTeams[0].id;
+			teamData = leaderTeams[0];
+		} else {
+			// Employee is a regular team member
+			const { data: membershipData } = await supabase
+				.from("team_members")
+				.select("team_id")
+				.eq("employee_id", employee.id)
+				.limit(1);
+			
+			teamId = membershipData?.[0]?.team_id as string | undefined;
+			
+			// Fetch team data for regular members
+			if (teamId) {
+				const { data } = await supabase
+					.from("teams")
+					.select(
+						"leader_id, leader:employees!teams_leader_id_fkey(id, first_name, last_name, avatar_url, designation, email)"
+					)
+					.eq("id", teamId)
+					.single();
+				teamData = data;
+			}
+		}
+
+		if (teamId && teamData) {
+			const leaderId = teamData.leader_id as string | null;
+			const leaderEmp = teamData.leader;
 
 			const { data: teamMembersData } = await supabase
 				.from("team_members")
@@ -202,24 +227,20 @@ export default function EmployeeDashboardPage() {
 				.eq("team_id", teamId)
 				.limit(10);
 
-			const mapped: MinimalTeamMember[] =
-				teamMembersData?.map((m: any) => ({
-					id: m.id,
-					employee_id: m.employee.id,
-					first_name: m.employee.first_name,
-					last_name: m.employee.last_name,
-					designation: m.employee.designation,
-					avatar_url: m.employee.avatar_url,
-					email: m.employee.email,
-					isSelf: m.employee.id === employee.id,
-					isLeader: m.employee.id === leaderId,
-				})) || [];
+			const mapped: MinimalTeamMember[] = (teamMembersData || []).map((m: any) => ({
+				id: m.id,
+				employee_id: m.employee.id,
+				first_name: m.employee.first_name,
+				last_name: m.employee.last_name,
+				designation: m.employee.designation,
+				avatar_url: m.employee.avatar_url,
+				email: m.employee.email,
+				isSelf: m.employee.id === employee.id,
+				isLeader: m.employee.id === leaderId,
+			}));
 
-			if (
-				leaderId &&
-				leaderEmp &&
-				!mapped.some((x) => x.employee_id === leaderId)
-			) {
+			// Add leader to the list if not already present
+			if (leaderId && leaderEmp && !mapped.some((x) => x.employee_id === leaderId)) {
 				mapped.unshift({
 					id: `leader-${leaderId}`,
 					employee_id: leaderId,
@@ -238,6 +259,7 @@ export default function EmployeeDashboardPage() {
 		}
 		setIsTeamLoading(false);
 	};
+
 
 	const handleClockIn = async () => {
 		if (!employee) return;
